@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming Simulations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .program {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        pre {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 5px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        button.copy-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button.copy-btn:hover {
+            background-color: #45a049;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Programming Simulations</h1>
+    <div class="container">
+
+        <!-- Character Stuffing -->
+        <div class="program">
+            <h2>1) Simulation of Frames using Character Stuffing</h2>
+            <pre id="code1">
+#include<stdio.h>
+#include<string.h>
+main()
+{
+    char os[50], fs[40] = "";
+    int i, j, k = 0;
+    printf("Enter the message:");
+    scanf("%s", os);
+    
+    fs[k] = '$';
+    k++;
+    for(i = 0; i < strlen(os); i++) {
+        fs[k] = os[i];
+        k++;
+        if (os[i] == '$' || os[i] == '#') {
+            fs[k] = os[i];
+            k = k + 1;
+        }
+    }
+    fs[k] = '#';
+    printf("Your message after stuffing: %s\n", fs);         
+}
+            </pre>
+            <button class="copy-btn" onclick="copyCode('code1')">Copy Code</button>
+        </div>
+
+        <!-- Bit Stuffing -->
+        <div class="program">
+            <h2>2) Simulation of Frames using Bit Stuffing</h2>
+            <pre id="code2">
+#include<stdio.h>
+#include<string.h>
+main()
+{
+    char os[60], fs[60] = "";
+    int i = 0, j, count = 0;
+    printf("Enter the bit string");
+    scanf("%s", os);
+    strcat(fs, "01111110");
+    printf("Original string is %s fs = %s\n", os, fs);
+    j = strlen(fs);
+    for(i = 0; i <= strlen(os); i++) {
+        if (os[i] == '1') {
+            count += 1;
+            fs[j] = '1';
+            j++;
+        } else if (os[i] == '0') {
+            fs[j] = '0';
+            j++;
+            count = 0;
+        }
+        if (count == 5) {
+            fs[j] = '0';
+            j++;
+            count = 0;
+        }
+    }
+    strcat(fs, "01111110");
+    printf("Your stuffed bitstring is");
+    printf("%s\n", fs);
+}
+            </pre>
+            <button class="copy-btn" onclick="copyCode('code2')">Copy Code</button>
+        </div>
+
+        <!-- Arithmetic Program -->
+        <div class="program">
+            <h2>3) Arithmetic Program (Server and Client)</h2>
+            <pre id="code3">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;unistd.h&gt;
+
+#define PORT 8080
+
+// Function to perform arithmetic operations
+int perform_operation(int a, int b, char operator) {
+    switch (operator) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return a / b;
+        default: return 0;
+    }
+}
+
+int main() {
+    int sockfd, new_sock;
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t addr_size;
+    char operator;
+    int num1, num2, result;
+
+    // Create socket
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd &lt; 0) {
+        perror("Socket creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(PORT);
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+
+    // Bind the socket to the port
+    if (bind(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) &lt; 0) {
+        perror("Bind failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Listen for incoming connections
+    if (listen(sockfd, 5) == 0) {
+        printf("Server listening on port %d...\n", PORT);
+    } else {
+        perror("Listen failed");
+        exit(EXIT_FAILURE);
+    }
+
+    addr_size = sizeof(client_addr);
+    new_sock = accept(sockfd, (struct sockaddr*)&client_addr, &addr_size);
+    if (new_sock &lt; 0) {
+        perror("Accept failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Receive numbers and operator from client
+    recv(new_sock, &num1, sizeof(num1), 0);
+    recv(new_sock, &num2, sizeof(num2), 0);
+    recv(new_sock, &operator, sizeof(operator), 0);
+
+    // Perform arithmetic operation
+    result = perform_operation(num1, num2, operator);
+
+    // Send result back to client
+    send(new_sock, &result, sizeof(result), 0);
+
+    close(new_sock);
+    close(sockfd);
+
+    return 0;
+}
+            </pre>
+            <button class="copy-btn" onclick="copyCode('code3')">Copy Code</button>
+        </div>
+
+    </div>
+
+    <script>
+        function copyCode(codeId) {
+            var code = document.getElementById(codeId).textContent;
+            var textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('Code copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
